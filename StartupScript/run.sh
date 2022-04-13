@@ -1,0 +1,1 @@
+java -jar api-1.0-SNAPSHOT.jar --lyrics.model.directory.path=model --spark.distributed-libraries=spark-distributed-library-1.0-SNAPSHOT-all.jar --lyrics.training.set.file.path=Merged_dataset.csv --react.app.directory.path=React-App/index.html
