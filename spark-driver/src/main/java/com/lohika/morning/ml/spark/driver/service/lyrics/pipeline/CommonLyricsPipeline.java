@@ -10,6 +10,7 @@ import com.lohika.morning.ml.spark.driver.service.lyrics.GenrePrediction;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.spark.ml.PipelineModel;
 import org.apache.spark.ml.linalg.DenseVector;
@@ -81,7 +82,7 @@ public abstract class CommonLyricsPipeline implements LyricsPipeline {
 
         rawTrainingSet.createOrReplaceTempView("csvdataTable");
 
-        Dataset input =
+        Dataset<Row> input =
                 readLyricsForGenre(Genre.RAP)
                         .union(readLyricsForGenre(Genre.POP))
                         .union(readLyricsForGenre(Genre.COUNTRY))
@@ -100,8 +101,8 @@ public abstract class CommonLyricsPipeline implements LyricsPipeline {
 
     private Dataset<Row> readLyricsForGenre(Genre genre) {
         Dataset<Row> rawLyrics = sparkSession
-                .sql("select lyrics as value from csvdataTable where genre = '" + genre.getName().toLowerCase() + "'");
-        Dataset<Row> lyrics = rawLyrics.withColumn(ID.getName(), functions.input_file_name());
+                .sql("select lyrics as value from csvdataTable where genre = '" + genre.getName().toLowerCase() + "' ");
+        Dataset<Row> lyrics = rawLyrics.withColumn(ID.getName(), functions.lit(UUID.randomUUID().toString()));
         Dataset<Row> labeledLyrics = lyrics.withColumn(LABEL.getName(), functions.lit(genre.getValue()));
 
         System.out.println(genre.name() + " music sentences = " + lyrics.count());
